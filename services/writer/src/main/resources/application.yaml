@@ -1,3 +1,24 @@
+server:
+  port: ${WRITER_PORT:8080}
+  shutdown: graceful
+
 spring:
   application:
     name: writer
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name:
+    hikari:
+      maximum-pool-size: 16
+      minimum-idle: 2
+      connection-timeout: 5000
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+logging:
+  level:
+    root: INFO
+    io.github.upinmcse: INFO
+    org.springframework.jdbc.core: WARN
