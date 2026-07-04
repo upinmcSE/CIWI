@@ -8,10 +8,10 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
-      timeout: 1s
+      host:            ${REDIS_HOST:localhost}
+      port:            ${REDIS_PORT:6379}
+      password:        ${REDIS_PASSWORD:}
+      timeout:         1s
       connect-timeout: 2s
       lettuce:
         pool:
@@ -43,7 +43,7 @@ management:
 
 logging:
   level:
-    root: INFO
-    io.github.upinmcse: INFO
-    org.apache.kafka: WARN
+    root:                      INFO
+    io.github.upinmcse:        INFO
+    org.apache.kafka:          WARN
     org.springframework.kafka: INFO

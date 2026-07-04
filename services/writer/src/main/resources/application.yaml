@@ -7,8 +7,8 @@ spring:
     name: writer
   datasource:
     url:
-    username:
-    password:
+    username: postgresql
+    password: postgresql
     driver-class-name:
     hikari:
       maximum-pool-size: 16
@@ -16,6 +16,17 @@ spring:
       connection-timeout: 5000
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
 
 logging:
   level:

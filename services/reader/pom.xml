@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.upinmcse</groupId>
         <artifactId>caching-infra-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -37,32 +37,31 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-        <!-- We need an embedded HTTP server so /actuator/health is reachable from
-            docker / k8s probes; -starter-web also pulls Jackson auto-config which
-            provides the ObjectMapper bean CdcEventConsumer expects. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- Lettuce pool support; without commons-pool2 the lettuce.pool.* config in
-             application.yml causes NoClassDefFoundError at startup. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
