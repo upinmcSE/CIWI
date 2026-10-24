@@ -1,6 +1,5 @@
 package io.github.upinmcse.invalidator.kafka;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.upinmcse.invalidator.redis.CacheInvalidator;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -9,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 public class CdcEventConsumer {
@@ -34,27 +34,27 @@ public class CdcEventConsumer {
             topics            = "${app.kafka.topic}",
             groupId           = "${app.kafka.group}",
             containerFactory  = "kafkaListenerContainerFactory")
-    public void onCdcEvent(ConsumerRecord<String, String> rec) {
-        if (rec.value() == null) {
+    public void onCdcEvent(ConsumerRecord<String, String> record) {
+        if (record.value() == null) {
             skippedTombstone.increment();
             return;
         }
 
-        DebeziumEnvelope.parse(rec.value(), mapper).ifPresentOrElse(env -> {
+        DebeziumEnvelope.parse(record.value(), mapper).ifPresentOrElse(env -> {
             env.primaryKey("id").ifPresentOrElse(id -> {
                 invalidator.invalidate(id);
                 handled.increment();
                 LOG.debug("op={} id={} partition={} offset={}",
-                        env.op(), id, rec.partition(), rec.offset());
+                        env.op(), id, record.partition(), record.offset());
             }, () -> {
                 skippedNoPk.increment();
                 LOG.warn("CDC event without id pk; partition={} offset={}",
-                        rec.partition(), rec.offset());
+                        record.partition(), record.offset());
             });
         }, () -> {
             skippedNoPk.increment();
             LOG.warn("unparseable CDC envelope; partition={} offset={}",
-                    rec.partition(), rec.offset());
+                    record.partition(), record.offset());
         });
     }
 }

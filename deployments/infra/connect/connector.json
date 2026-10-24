@@ -1,0 +1,28 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "tasks.max": "1",
+
+  "database.hostname": "${POSTGRES_HOST}",
+  "database.port": "${POSTGRES_PORT}",
+  "database.user": "${CDC_USER}",
+  "database.password": "${CDC_PASSWORD}",
+  "database.dbname": "${POSTGRES_DB}",
+
+  "topic.prefix": "cdc",
+  "table.include.list": "public.items",
+  "plugin.name": "pgoutput",
+
+  "slot.name": "debezium_items_slot",
+  "publication.name": "dbz_items_publication",
+  "publication.autocreate.mode": "filtered",
+
+  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "key.converter.schemas.enable": "false",
+  "value.converter.schemas.enable": "false",
+
+  "topic.creation.default.replication.factor": "1",
+  "topic.creation.default.partitions": "6",
+  "topic.creation.default.cleanup.policy": "delete",
+  "topic.creation.default.compression.type": "lz4"
+}

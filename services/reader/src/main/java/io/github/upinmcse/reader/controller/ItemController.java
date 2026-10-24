@@ -35,21 +35,21 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable long id) {
-        Optional<Item> hit = itemCache.get(id);
-        if (hit.isPresent()) {
+        Optional<Item> itemHitCache = itemCache.get(id);
+        if (itemHitCache.isPresent()) {
             hits.increment();
-            return ResponseEntity.ok().header("X-Cache", "HIT").body(hit.get());
+            return ResponseEntity.ok().header("X-Cache", "HIT").body(itemHitCache.get());
         }
-        Optional<Item> fromDb = itemRepository.findById(id);
-        if (fromDb.isEmpty()) {
+        Optional<Item> itemFromDb = itemRepository.findById(id);
+        if (itemFromDb.isEmpty()) {
             notFound.increment();
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .header("X-Cache", "MISS")
                     .body(Map.of("error", "not_found", "id", id));
         }
-        itemCache.put(fromDb.get());
+        itemCache.put(itemFromDb.get());
         misses.increment();
-        return ResponseEntity.ok().header("X-Cache", "MISS").body(fromDb.get());
+        return ResponseEntity.ok().header("X-Cache", "MISS").body(itemFromDb.get());
     }
 }

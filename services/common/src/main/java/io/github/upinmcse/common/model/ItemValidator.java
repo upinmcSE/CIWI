@@ -8,8 +8,7 @@ public final class ItemValidator {
 
     private static final Set<String> ALLOWED_CURRENCIES = Set.of("USD", "EUR", "VND", "JPY", "GBP");
 
-    private ItemValidator() {
-    }
+    private ItemValidator() {}
 
     public static List<String> validate(Item item) {
         List<String> errors = new ArrayList<>();

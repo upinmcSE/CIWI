@@ -1,3 +1,4 @@
+# stage 1
 FROM maven:3.9.8-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
@@ -13,11 +14,17 @@ RUN --mount=type=cache,target=/root/.m2 \
 
 COPY services/common/src services/common/src
 COPY services/reader/src services/reader/src
+
 RUN --mount=type=cache,target=/root/.m2 \
     mvn -B -ntp -pl services/reader -am package -DskipTests
 
+# stage 2
 FROM gcr.io/distroless/java21-debian12:debug-nonroot
+
 COPY --from=build /workspace/services/reader/target/cache-reader-exec.jar /app.jar
+
 USER nonroot:nonroot
+
 EXPOSE 8081
+
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-XX:+ExitOnOutOfMemoryError", "-jar", "/app.jar"]

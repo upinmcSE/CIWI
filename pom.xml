@@ -28,8 +28,8 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>3.4.11</spring-boot.version>
-        <postgresql-driver.version>42.7.11</postgresql-driver.version>
+        <spring-boot.version>4.1.0</spring-boot.version>
+        <postgresql-driver.version>42.7.14</postgresql-driver.version>
         <lettuce.version>7.6.0.RELEASE</lettuce.version>
 
         <junit.version>5.10.3</junit.version>
@@ -60,10 +60,6 @@
 
     <build>
         <plugins>
-            <!-- Globally enable `-parameters` so Spring MVC can bind @PathVariable
-                 / @RequestParam without us having to repeat the name in every annotation
-                 (`@PathVariable("id") long id` → `@PathVariable long id`). The Spring Boot
-                 starter parent does this for you, but we import the BOM, not the parent. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -71,11 +67,6 @@
                     <parameters>true</parameters>
                 </configuration>
             </plugin>
-
-            <!-- Failsafe runs *IT.java in the integration-test phase (i.e. as part of
-                 `mvn verify`). Surefire keeps owning *Test.java in the test phase. We
-                 deliberately DO bind 'verify' so the build fails on any IT failure;
-                 without it Failsafe collects results but never asserts on them. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>

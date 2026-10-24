@@ -1,6 +1,5 @@
 package io.github.upinmcse.reader.cache;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.upinmcse.common.cache.CacheKeys;
 import io.github.upinmcse.common.model.Item;
 import org.slf4j.Logger;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class ItemCache {
         try {
             json = redis.opsForValue().get(key);
         } catch (Exception ex) {
-            // Redis unavailable → behave like a cache miss so reads keep flowing from MySQL.
+            // Redis unavailable → behave like a cache miss so reads keep flowing from Postgres.
             LOG.warn("redis GET failed for {}: {}", key, ex.toString());
             return Optional.empty();
         }

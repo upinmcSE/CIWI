@@ -1,0 +1,86 @@
+
+services:
+  writer:
+    image: cache-writer:0.1.0
+    build:
+      context: ../..
+      dockerfile: ../../services/writer/Dockerfile
+    container_name: writer
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      WRITER_PORT:       "8080"
+      POSTGRES_HOST:     "postgres"
+      POSTGRES_PORT:     "5432"
+      POSTGRES_DB:       "${POSTGRES_DB:-catalog}"
+      POSTGRES_USER:     "${POSTGRES_USER:-app}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-app}"
+    ports:
+      - "${WRITER_HOST_PORT:-8080}:8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "/busybox/wget -qO- http://localhost:8080/actuator/health/readiness | /busybox/grep -q UP" ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 20s
+
+  reader:
+    image: cache-reader:0.1.0
+    build:
+      context: ../..
+      dockerfile: ../../services/reader/Dockerfile
+    container_name: reader
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      READER_PORT:       "8081"
+      POSTGRES_HOST:     "postgres"
+      POSTGRES_PORT:     "5432"
+      POSTGRES_DB:       "${POSTGRES_DB:-catalog}"
+      POSTGRES_USER:     "${POSTGRES_USER:-app}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-app}"
+      REDIS_HOST:        "redis"
+      REDIS_PORT:        "6379"
+      CACHE_TTL:         "${CACHE_TTL:-10m}"
+    ports:
+      - "${READER_HOST_PORT:-8081}:8081"
+    healthcheck:
+      test: [ "CMD-SHELL", "/busybox/wget -qO- http://localhost:8081/actuator/health/readiness | /busybox/grep -q UP" ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 20s
+
+  invalidator:
+    image: cache-invalidator:0.1.0
+    build:
+      context: ../..
+      dockerfile: ../../services/invalidator/Dockerfile
+    container_name: invalidator
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      register-debezium:
+        condition: service_completed_successfully
+    environment:
+      INVALIDATOR_MGMT_PORT: "8090"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+      KAFKA_TOPIC: "cdc.catalog.public.items"
+      KAFKA_GROUP: "cache-invalidator"
+      KAFKA_CONCURRENCY: "${KAFKA_CONCURRENCY:-3}"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+    ports:
+      - "${INVALIDATOR_MGMT_HOST_PORT:-8090}:8090"
+    healthcheck:
+      test: [ "CMD-SHELL", "/busybox/wget -qO- http://localhost:8090/actuator/health | /busybox/grep -q UP" ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s

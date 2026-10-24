@@ -32,8 +32,15 @@ public class ItemRepository {
     public Optional<Item> findById(long id) {
         try {
             return Optional.ofNullable(jdbc.queryForObject(
-                    "SELECT id, name, description, price_cents, currency, stock, "
-                            + "created_at, updated_at FROM items WHERE id = ?",
+                    "SELECT " +
+                            "id, " +
+                            "name, " +
+                            "description, " +
+                            "price_cents, " +
+                            "currency, " +
+                            "stock, " +
+                            "created_at, " +
+                            "updated_at FROM items WHERE id = ?",
                     ROW_MAPPER, id));
         } catch (EmptyResultDataAccessException ex) {
             return Optional.empty();

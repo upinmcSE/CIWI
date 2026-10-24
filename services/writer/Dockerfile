@@ -1,12 +1,8 @@
 # ─── stage 1: build the Spring Boot fat jar ────────────────────────────────
-# Build context = workspace root:
 #   docker build -f services/writer/Dockerfile -t cache-writer:0.1.0 .
 FROM maven:3.9.8-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
-# All module POMs are copied first so the parent's <modules> stanza resolves cleanly and
-# Maven can build a stable dependency graph in a single cached layer. Only the module(s)
-# we actually compile need src/ — the rest stay as POM-only stubs.
 COPY pom.xml ./
 COPY services/common/pom.xml      services/common/pom.xml
 COPY services/writer/pom.xml      services/writer/pom.xml

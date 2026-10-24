@@ -1,3 +1,4 @@
+# stage 1
 FROM maven:3.9.8-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
@@ -16,6 +17,7 @@ COPY services/invalidator/src services/invalidator/src
 RUN --mount=type=cache,target=/root/.m2 \
     mvn -B -ntp -pl services/invalidator -am package -DskipTests
 
+# stage 2
 FROM gcr.io/distroless/java21-debian12:debug-nonroot
 COPY --from=build /workspace/services/invalidator/target/cache-invalidator-exec.jar /app.jar
 USER nonroot:nonroot

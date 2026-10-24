@@ -40,7 +40,12 @@ public class ItemRepository {
         KeyHolder keys = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO items (name, description, price_cents, currency, stock) "
+                    "INSERT INTO items (" +
+                            "name, " +
+                            "description, " +
+                            "price_cents, " +
+                            "currency, " +
+                            "stock) "
                             + "VALUES (?, ?, ?, ?, ?)",
                     new String[]{"id"});
             ps.setString(1, item.name());
@@ -72,12 +77,17 @@ public class ItemRepository {
 
     /** Returns true if a row was actually updated. */
     @Transactional
-    public boolean update(long id, Item patch) {
+    public boolean update(long id, Item patchItem) {
         int n = jdbc.update(
                 "UPDATE items SET name = ?, description = ?, price_cents = ?, currency = ?, stock = ? "
                         + "WHERE id = ?",
-                patch.name(), patch.description(), patch.priceCents(), patch.currency(),
-                patch.stock(), id);
+                patchItem.name(),
+                patchItem.description(),
+                patchItem.priceCents(),
+                patchItem.currency(),
+                patchItem.stock(),
+                id
+        );
         return n > 0;
     }
 

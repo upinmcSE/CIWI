@@ -6,10 +6,10 @@ spring:
   application:
     name: writer
   datasource:
-    url:
-    username: postgresql
-    password: postgresql
-    driver-class-name:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:catalog}
+    username: ${POSTGRES_USER:app}
+    password: ${POSTGRES_PASSWORD:app}
+    driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 16
       minimum-idle: 2

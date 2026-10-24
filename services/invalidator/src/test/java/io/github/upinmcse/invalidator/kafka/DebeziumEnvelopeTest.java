@@ -1,7 +1,7 @@
 package io.github.upinmcse.invalidator.kafka;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 
